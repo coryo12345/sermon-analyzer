@@ -8,7 +8,7 @@ test:
 	go test -v cmd/main.go
 
 run:
-	go run cmd/main.go
+	go run cmd/main.go serve
 
 watch:
 	if ! command -v air &> /dev/null; then \

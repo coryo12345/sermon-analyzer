@@ -26,3 +26,4 @@ dist-ssr
 # Binaries & data
 *.out
 api/tmp
+api/pb_data/
