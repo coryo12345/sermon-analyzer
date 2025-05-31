@@ -1,0 +1,23 @@
+{
+  "name": "audio-fetcher",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "module": "NodeNext",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --outDir dist",
+    "dev": "npm run build -- --watch",
+    "start": "npm run build &&node dist/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^22.15.29",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "puppeteer-stream": "^3.0.20"
+  }
+}
