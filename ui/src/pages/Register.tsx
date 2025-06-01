@@ -3,6 +3,7 @@ import { getApiClient, getErrors } from "../lib/api";
 import { useLocation } from "preact-iso";
 import { ClientResponseError } from "pocketbase";
 import { useSnackbar } from "../components/Snackbar";
+import { Alert } from "../components/Alert";
 
 export function Register() {
   const client = getApiClient();
@@ -10,11 +11,13 @@ export function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const signup = async (e: Event) => {
     e.preventDefault();
 
     try {
+      setError(null);
       const authData = await client.collection("users").create({
         email,
         emailVisibility: true,
@@ -34,12 +37,7 @@ export function Register() {
       }
     } catch (err) {
       const errs = getErrors(err as ClientResponseError);
-      addMessage({
-        type: "error",
-        title: "Registration failed",
-        message: errs?.[0] || "Please check your information and try again",
-        duration: 7000,
-      });
+      setError(errs?.[0] || "Please check your information and try again");
     }
   };
 
@@ -57,6 +55,7 @@ export function Register() {
 
         <div class="bg-white dark:bg-surface-900 py-8 px-6 shadow-xl rounded-xl border border-surface-200 dark:border-surface-700">
           <form class="space-y-6" onSubmit={signup}>
+            {error && <Alert type="error" title="Registration Failed" message={error} />}
             <div>
               <label
                 htmlFor="email"
