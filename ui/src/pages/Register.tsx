@@ -1,10 +1,12 @@
 import { useState } from "preact/hooks";
-import { getApiClient } from "../lib/api";
+import { getApiClient, getErrors } from "../lib/api";
 import { useLocation } from "preact-iso";
 import { ClientResponseError } from "pocketbase";
+import { useSnackbar } from "../components/Snackbar";
 
 export function Register() {
   const client = getApiClient();
+  const { addMessage } = useSnackbar();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -21,12 +23,23 @@ export function Register() {
       });
 
       if (authData.id) {
-        window.location.href = "/";
+        addMessage({
+          type: "success",
+          title: "Account created successfully!",
+          message: "Welcome to Sermon Analyzer",
+        });
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
       }
     } catch (err) {
-      const data = (err as ClientResponseError).response
-      // TODO handle this somehow
-      console.error(data);
+      const errs = getErrors(err as ClientResponseError);
+      addMessage({
+        type: "error",
+        title: "Registration failed",
+        message: errs?.[0] || "Please check your information and try again",
+        duration: 7000,
+      });
     }
   };
 

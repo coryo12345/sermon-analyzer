@@ -12,13 +12,14 @@ export const getApiClient = () => {
 };
 
 export const getErrors = (response: ClientResponseError): string[] => {
-  const data = response.data;
+  if (!response.data) return [];
+  const data = response.data.data;
   if (!data) return [];
   const errs: string[] = [];
 
   Object.entries(data).forEach(([key, value]) => {
-    if (!value.message || typeof value.message !== 'string') return;
-    errs.push(`${capitalize(key)} ${value.message.toLowerCase()}`);
+    if (!(value as any).message || typeof (value as any).message !== 'string') return;
+    errs.push(`${capitalize(key)} ${(value as any).message.toLowerCase()}`);
   });
 
   return errs;
