@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"api/internal/hooks"
 	_ "api/migrations"
 
 	"github.com/pocketbase/pocketbase"
@@ -35,6 +36,8 @@ func main() {
 		// e.App.Settings().Meta.AppURL = "http://localhost:8090"
 		return nil
 	})
+
+	hooks.ConfigureHooks(app)
 
 	if err := app.Start(); err != nil {
 		log.Fatal(err)

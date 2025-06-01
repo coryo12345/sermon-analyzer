@@ -29,6 +29,13 @@ export function Register() {
       });
 
       if (authData.id) {
+        await client.collection("users").authWithPassword(email, password);
+
+        if (!client.authStore.isValid) {
+          // i dont think this should happen, but in theory it could? just in case
+          throw new Error("Something went wrong. Please try again.");
+        }
+
         addMessage({
           type: "success",
           title: "Account created successfully!",
