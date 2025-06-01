@@ -1,5 +1,7 @@
 import { lazy, Route, Router, useLocation } from "preact-iso";
+import { useEffect } from "preact/hooks";
 import { Header } from "./components/Header.jsx";
+import { getApiClient } from "./lib/api";
 
 const LoginPage = lazy(() => import("./pages/Login.jsx").then((m) => m.Login));
 const RegisterPage = lazy(() =>
@@ -12,8 +14,17 @@ const NotFoundPage = lazy(() =>
 
 export function AppContent() {
   const location = useLocation();
-  const isAuthPage =
-    location.path === "/login" || location.path === "/register";
+  const client = getApiClient();
+  
+  const isAuthPage = location.path === "/login" || location.path === "/register";
+  const isLoggedIn = client.authStore.isValid;
+
+  useEffect(() => {
+    // If user is not logged in and trying to access a protected route, redirect to login
+    if (!isLoggedIn && !isAuthPage) {
+      window.location.href = "/login";
+    }
+  }, [isLoggedIn, isAuthPage, location.path]);
 
   return (
     <>
