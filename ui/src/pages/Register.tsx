@@ -55,7 +55,9 @@ export function Register() {
 
         <div class="bg-white dark:bg-surface-900 py-8 px-6 shadow-xl rounded-xl border border-surface-200 dark:border-surface-700">
           <form class="space-y-6" onSubmit={signup}>
-            {error && <Alert type="error" title="Registration Failed" message={error} />}
+            {error && (
+              <Alert type="error" title="Registration Failed" message={error} />
+            )}
             <div>
               <label
                 htmlFor="email"

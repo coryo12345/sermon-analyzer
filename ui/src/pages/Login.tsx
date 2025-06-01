@@ -1,9 +1,34 @@
 import { useState } from "preact/hooks";
+import { getApiClient, getErrors } from "../lib/api";
+import { ClientResponseError } from "pocketbase";
+import { Alert } from "../components/Alert";
 
 export function Login() {
+  const client = getApiClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  // const [rememberMe, setRememberMe] = useState(false);
+
+  const signin = async (e: Event) => {
+    e.preventDefault();
+    try {
+      setError(null);
+      setLoading(true);
+      await client.collection("users").authWithPassword(email, password);
+      if (client.authStore.isValid) {
+        window.location.href = "/";
+      } else {
+        setError("Invalid email or password. Please try again.");
+      }
+    } catch (err) {
+      const errs = getErrors(err as ClientResponseError);
+      setError(errs?.[0] || "Please check your information and try again");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div class="min-h-screen flex items-center justify-center bg-background-50 dark:bg-background-950 px-4 sm:px-6 lg:px-8">
@@ -18,7 +43,10 @@ export function Login() {
         </div>
 
         <div class="bg-white dark:bg-surface-900 py-8 px-6 shadow-xl rounded-xl border border-surface-200 dark:border-surface-700">
-          <form class="space-y-6" action="#" method="POST">
+          <form class="space-y-6" onSubmit={signin}>
+            {error && (
+              <Alert type="error" title="Login Failed" message={error} />
+            )}
             <div>
               <label
                 htmlFor="email"
@@ -33,6 +61,7 @@ export function Login() {
                   type="email"
                   autoComplete="email"
                   required
+                  disabled={loading}
                   value={email}
                   onInput={(e) =>
                     setEmail((e.target as HTMLInputElement).value)
@@ -57,6 +86,7 @@ export function Login() {
                   type="password"
                   autoComplete="current-password"
                   required
+                  disabled={loading}
                   value={password}
                   onInput={(e) =>
                     setPassword((e.target as HTMLInputElement).value)
@@ -67,8 +97,8 @@ export function Login() {
               </div>
             </div>
 
-            <div class="flex items-center justify-between">
-              <div class="flex items-center">
+            {/* <div class="flex items-center justify-between">
+              div class="flex items-center">
                 <input
                   id="remember-me"
                   name="remember-me"
@@ -95,11 +125,12 @@ export function Login() {
                   Forgot your password?
                 </a>
               </div>
-            </div>
+            </div> */}
 
             <div>
               <button
                 type="submit"
+                disabled={loading}
                 class="group cursor-pointer relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-surface-900 transition-colors duration-200"
               >
                 Sign in
