@@ -5,8 +5,10 @@ import (
 	"os"
 
 	"api/internal/hooks"
+	"api/internal/jobs"
 	_ "api/migrations"
 
+	"github.com/joho/godotenv"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
@@ -14,6 +16,11 @@ import (
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file", err.Error())
+	}
+
 	app := pocketbase.New()
 
 	migratecmd.MustRegister(app, app.RootCmd, migratecmd.Config{
@@ -32,12 +39,15 @@ func main() {
 			return err
 		}
 		e.App.Settings().Meta.AppName = "Sermon Analysis"
-		// TODO - get app url from env
-		// e.App.Settings().Meta.AppURL = "http://localhost:8090"
+		e.App.Settings().Meta.AppURL = os.Getenv("APP_URL")
 		return nil
 	})
 
 	hooks.ConfigureHooks(app)
+
+	app.Cron().MustAdd("analyze-sermons", "* * * * *", func() {
+		jobs.SermonAnalysisJob(app)
+	})
 
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
