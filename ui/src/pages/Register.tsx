@@ -1,9 +1,34 @@
 import { useState } from "preact/hooks";
+import { getApiClient } from "../lib/api";
+import { useLocation } from "preact-iso";
+import { ClientResponseError } from "pocketbase";
 
 export function Register() {
+  const client = getApiClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+
+  const signup = async (e: Event) => {
+    e.preventDefault();
+
+    try {
+      const authData = await client.collection("users").create({
+        email,
+        emailVisibility: true,
+        password,
+        passwordConfirm,
+      });
+
+      if (authData.id) {
+        window.location.href = "/";
+      }
+    } catch (err) {
+      const data = (err as ClientResponseError).response
+      // TODO handle this somehow
+      console.error(data);
+    }
+  };
 
   return (
     <div class="min-h-screen flex items-center justify-center bg-background-50 dark:bg-background-950 px-4 sm:px-6 lg:px-8">
@@ -18,7 +43,7 @@ export function Register() {
         </div>
 
         <div class="bg-white dark:bg-surface-900 py-8 px-6 shadow-xl rounded-xl border border-surface-200 dark:border-surface-700">
-          <form class="space-y-6" action="#" method="POST">
+          <form class="space-y-6" onSubmit={signup}>
             <div>
               <label
                 htmlFor="email"
