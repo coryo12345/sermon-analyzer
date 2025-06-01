@@ -37,6 +37,7 @@ export function SnackbarProvider({ children }: SnackbarProviderProps) {
   const [messages, setMessages] = useState<SnackbarMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState<SnackbarMessage | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [progressWidth, setProgressWidth] = useState(100);
 
   const addMessage = (message: Omit<SnackbarMessage, "id">) => {
     const newMessage: SnackbarMessage = {
@@ -53,11 +54,17 @@ export function SnackbarProvider({ children }: SnackbarProviderProps) {
       setCurrentMessage(nextMessage);
       setMessages(prev => prev.slice(1));
       setIsVisible(true);
+      setProgressWidth(100);
     }
   }, [currentMessage, messages]);
 
   useEffect(() => {
     if (currentMessage && isVisible) {
+      // Start progress bar animation immediately
+      setTimeout(() => {
+        setProgressWidth(0);
+      }, 100); // Small delay to ensure initial state is rendered
+
       const timer = setTimeout(() => {
         setIsVisible(false);
         setTimeout(() => {
@@ -122,6 +129,21 @@ export function SnackbarProvider({ children }: SnackbarProviderProps) {
     }, 300);
   };
 
+  const getProgressBarColor = (type: SnackbarType) => {
+    switch (type) {
+      case "success":
+        return "bg-success-300";
+      case "error":
+        return "bg-error-300";
+      case "warning":
+        return "bg-warning-300";
+      case "info":
+        return "bg-primary-300";
+      default:
+        return "bg-surface-300";
+    }
+  };
+
   return (
     <SnackbarContext.Provider value={{ addMessage }}>
       {children}
@@ -130,48 +152,62 @@ export function SnackbarProvider({ children }: SnackbarProviderProps) {
           <div
             class={`
               ${getTypeStyles(currentMessage.type)}
-              border rounded-lg shadow-lg p-4 min-w-80 max-w-md
+              border rounded-lg shadow-lg min-w-80 max-w-md
               transform transition-all duration-300 ease-in-out
               ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}
+              relative overflow-hidden
             `}
           >
-            <div class="flex items-start">
-              <div class="flex-shrink-0">
-                {getIcon(currentMessage.type)}
-              </div>
-              <div class="ml-3 w-0 flex-1">
-                <p class="text-sm font-medium">
-                  {currentMessage.title}
-                </p>
-                {currentMessage.message && (
-                  <p class="mt-1 text-sm opacity-90">
-                    {currentMessage.message}
+            <div class="p-4">
+              <div class="flex items-start">
+                <div class="flex-shrink-0">
+                  {getIcon(currentMessage.type)}
+                </div>
+                <div class="ml-3 w-0 flex-1">
+                  <p class="text-sm font-medium">
+                    {currentMessage.title}
                   </p>
-                )}
-                {currentMessage.action && (
-                  <div class="mt-2">
-                    <button
-                      type="button"
-                      onClick={currentMessage.action.onClick}
-                      class="text-sm font-medium underline hover:no-underline focus:outline-none focus:underline"
-                    >
-                      {currentMessage.action.label}
-                    </button>
-                  </div>
-                )}
+                  {currentMessage.message && (
+                    <p class="mt-1 text-sm opacity-90">
+                      {currentMessage.message}
+                    </p>
+                  )}
+                  {currentMessage.action && (
+                    <div class="mt-2">
+                      <button
+                        type="button"
+                        onClick={currentMessage.action.onClick}
+                        class="text-sm font-medium underline hover:no-underline focus:outline-none focus:underline"
+                      >
+                        {currentMessage.action.label}
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div class="ml-4 flex-shrink-0 flex">
+                  <button
+                    type="button"
+                    onClick={closeSnackbar}
+                    class="inline-flex text-white hover:opacity-75 focus:outline-none focus:opacity-75"
+                  >
+                    <span class="sr-only">Close</span>
+                    <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
               </div>
-              <div class="ml-4 flex-shrink-0 flex">
-                <button
-                  type="button"
-                  onClick={closeSnackbar}
-                  class="inline-flex text-white hover:opacity-75 focus:outline-none focus:opacity-75"
-                >
-                  <span class="sr-only">Close</span>
-                  <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </button>
-              </div>
+            </div>
+            
+            {/* Progress bar */}
+            <div class="absolute bottom-0 left-0 h-1 bg-transparent bg-opacity-20 w-full">
+              <div 
+                class={`h-full ${getProgressBarColor(currentMessage.type)} transition-all ease-linear`}
+                style={{
+                  width: `${progressWidth}%`,
+                  transitionDuration: currentMessage && isVisible ? `${(currentMessage.duration ?? 100) - 100}ms` : '0ms'
+                }}
+              />
             </div>
           </div>
         </div>
