@@ -2,6 +2,7 @@ import { useState } from "preact/hooks";
 import { getApiClient, getErrors } from "../lib/api";
 import { ClientResponseError } from "pocketbase";
 import { Alert } from "../components/Alert";
+import { Button } from "../components/Button";
 
 export function Login() {
   const client = getApiClient();
@@ -9,7 +10,6 @@ export function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  // const [rememberMe, setRememberMe] = useState(false);
 
   const signin = async (e: Event) => {
     e.preventDefault();
@@ -98,25 +98,6 @@ export function Login() {
             </div>
 
             {/* <div class="flex items-center justify-between">
-              div class="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) =>
-                    setRememberMe((e.target as HTMLInputElement).checked)
-                  }
-                  class="h-4 w-4 cursor-pointer text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded bg-white dark:bg-surface-800"
-                />
-                <label
-                  htmlFor="remember-me"
-                  class="ml-2 block text-sm cursor-pointer text-background-700 dark:text-background-300"
-                >
-                  Remember me
-                </label>
-              </div>
-
               <div class="text-sm">
                 <a
                   href="#"
@@ -128,13 +109,9 @@ export function Login() {
             </div> */}
 
             <div>
-              <button
-                type="submit"
-                disabled={loading}
-                class="group cursor-pointer relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-surface-900 transition-colors duration-200"
-              >
+              <Button type="submit" loading={loading} className="w-full">
                 Sign in
-              </button>
+              </Button>
             </div>
 
             <div class="text-center">

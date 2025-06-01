@@ -4,6 +4,7 @@ import { useLocation } from "preact-iso";
 import { ClientResponseError } from "pocketbase";
 import { useSnackbar } from "../components/Snackbar";
 import { Alert } from "../components/Alert";
+import { Button } from "../components/Button";
 
 export function Register() {
   const client = getApiClient();
@@ -12,12 +13,14 @@ export function Register() {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const signup = async (e: Event) => {
     e.preventDefault();
 
     try {
       setError(null);
+      setLoading(true);
       const authData = await client.collection("users").create({
         email,
         emailVisibility: true,
@@ -30,6 +33,7 @@ export function Register() {
           type: "success",
           title: "Account created successfully!",
           message: "Welcome to Sermon Analyzer",
+          duration: 1001,
         });
         setTimeout(() => {
           window.location.href = "/";
@@ -38,6 +42,8 @@ export function Register() {
     } catch (err) {
       const errs = getErrors(err as ClientResponseError);
       setError(errs?.[0] || "Please check your information and try again");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,6 +78,7 @@ export function Register() {
                   type="email"
                   autoComplete="email"
                   required
+                  disabled={loading}
                   value={email}
                   onInput={(e) =>
                     setEmail((e.target as HTMLInputElement).value)
@@ -96,6 +103,7 @@ export function Register() {
                   type="password"
                   autoComplete="new-password"
                   required
+                  disabled={loading}
                   value={password}
                   onInput={(e) =>
                     setPassword((e.target as HTMLInputElement).value)
@@ -120,6 +128,7 @@ export function Register() {
                   type="password"
                   autoComplete="new-password"
                   required
+                  disabled={loading}
                   value={passwordConfirm}
                   onInput={(e) =>
                     setPasswordConfirm((e.target as HTMLInputElement).value)
@@ -131,12 +140,9 @@ export function Register() {
             </div>
 
             <div>
-              <button
-                type="submit"
-                class="group cursor-pointer relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-surface-900 transition-colors duration-200"
-              >
+              <Button type="submit" className="w-full" loading={loading}>
                 Create Account
-              </button>
+              </Button>
             </div>
 
             <div class="text-center">

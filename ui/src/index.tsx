@@ -1,7 +1,7 @@
 import { render } from "preact";
 import { ErrorBoundary, LocationProvider } from "preact-iso";
-import { AppContent } from "./routing";
 import { SnackbarProvider } from "./components/Snackbar";
+import { AppContent } from "./routing";
 
 // required
 import "./style.css";

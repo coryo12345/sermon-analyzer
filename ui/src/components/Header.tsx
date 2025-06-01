@@ -1,7 +1,13 @@
-// import { useLocation } from "preact-iso";
+import { getApiClient } from "../lib/api";
+import { Button } from "./Button";
 
 export function Header() {
-//   const { url } = useLocation();
+  const client = getApiClient();
+
+  const logout = () => {
+    client.authStore.clear();
+    window.location.href = "/login";
+  };
 
   return (
     <header className="bg-background-900 border-b border-surface-700">
@@ -13,6 +19,9 @@ export function Header() {
           >
             Home
           </a>
+          <Button variant="ghost" onClick={logout}>
+            Sign Out
+          </Button>
         </div>
       </nav>
     </header>
