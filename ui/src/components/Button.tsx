@@ -3,16 +3,17 @@ import { forwardRef } from "preact/compat";
 import { JSX } from "preact";
 
 export interface ButtonProps
-  extends Omit<JSX.HTMLAttributes<HTMLButtonElement>, "type" | "disabled"> {
+  extends Omit<JSX.HTMLAttributes<HTMLButtonElement | HTMLAnchorElement>, "type" | "disabled"> {
   children: ComponentChildren;
   type?: "button" | "submit" | "reset";
   variant?: "primary" | "secondary" | "danger" | "ghost";
   size?: "sm" | "md" | "lg";
   loading?: boolean;
   disabled?: boolean;
+  to?: string;
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
   (
     {
       children,
@@ -23,6 +24,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       disabled = false,
       className = "",
       onClick,
+      to,
       ...props
     },
     ref
@@ -88,25 +90,47 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       </svg>
     );
 
+    const baseClasses = `
+      relative flex justify-center items-center font-medium rounded-lg
+      focus:outline-none focus:ring-2 focus:ring-offset-2
+      dark:focus:ring-offset-surface-900
+      transition-all duration-200
+      ${getVariantStyles()}
+      ${getSizeStyles()}
+      ${className}
+    `;
+
+    const content = (
+      <>
+        {loading && <Spinner />}
+        <span class={loading ? "opacity-75" : ""}>{children}</span>
+      </>
+    );
+
+    if (to) {
+      return (
+        <a
+          ref={ref as Ref<HTMLAnchorElement>}
+          href={to}
+          aria-disabled={isDisabled}
+          class={baseClasses}
+          {...(props as JSX.HTMLAttributes<HTMLAnchorElement>)}
+        >
+          {content}
+        </a>
+      );
+    }
+
     return (
       <button
-        ref={ref}
+        ref={ref as Ref<HTMLButtonElement>}
         type={type}
         disabled={isDisabled}
         onClick={isDisabled ? undefined : onClick}
-        class={`
-        relative flex justify-center items-center font-medium rounded-lg
-        focus:outline-none focus:ring-2 focus:ring-offset-2
-        dark:focus:ring-offset-surface-900
-        transition-all duration-200
-        ${getVariantStyles()}
-        ${getSizeStyles()}
-        ${className}
-      `}
-        {...props}
+        class={baseClasses}
+        {...(props as JSX.HTMLAttributes<HTMLButtonElement>)}
       >
-        {loading && <Spinner />}
-        <span class={loading ? "opacity-75" : ""}>{children}</span>
+        {content}
       </button>
     );
   }

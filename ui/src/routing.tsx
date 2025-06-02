@@ -8,6 +8,8 @@ const RegisterPage = lazy(() =>
   import("./pages/Register.jsx").then((m) => m.Register)
 );
 const HomePage = lazy(() => import("./pages/Home.jsx").then((m) => m.Home));
+const CreatePage = lazy(() => import("./pages/Create.jsx").then((m) => m.Create));
+const SermonViewPage = lazy(() => import("./pages/SermonView.jsx").then((m) => m.SermonView));
 const NotFoundPage = lazy(() =>
   import("./pages/_404.jsx").then((m) => m.NotFound)
 );
@@ -32,6 +34,8 @@ export function AppContent() {
       <main>
         <Router>
           <Route path="/" component={HomePage} />
+          <Route path="/create" component={CreatePage} />
+          <Route path="/view" component={SermonViewPage} />
           <Route path="/login" component={LoginPage} />
           <Route path="/register" component={RegisterPage} />
           <Route default component={NotFoundPage} />
