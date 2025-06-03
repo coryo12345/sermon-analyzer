@@ -6,7 +6,12 @@ import (
 	_ "embed"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
+	"log/slog"
+	"net/http"
 	"os"
+	"path"
 	"strings"
 
 	"google.golang.org/genai"
@@ -25,7 +30,7 @@ type AnalysisResult struct {
 	Details   []models.SermonDetail   `json:"notes"`
 }
 
-func NewAnalyzer(job models.SermonAnalysisJob) (Analyzer, error) {
+func NewAnalyzer(job models.SermonAnalysisJob, logger *slog.Logger) (Analyzer, error) {
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, &genai.ClientConfig{
 		APIKey:  os.Getenv("GEMINI_API_KEY"),
@@ -39,6 +44,7 @@ func NewAnalyzer(job models.SermonAnalysisJob) (Analyzer, error) {
 		ctx:    ctx,
 		job:    job,
 		client: client,
+		logger: logger,
 	}, nil
 }
 
@@ -46,6 +52,7 @@ type sermonAnalyzer struct {
 	ctx    context.Context
 	job    models.SermonAnalysisJob
 	client *genai.Client
+	logger *slog.Logger
 }
 
 func (a *sermonAnalyzer) AnalyzeSermon(job models.SermonAnalysisJob) (AnalysisResult, error) {
@@ -53,11 +60,15 @@ func (a *sermonAnalyzer) AnalyzeSermon(job models.SermonAnalysisJob) (AnalysisRe
 		return AnalysisResult{}, errors.New("audio url is required")
 	}
 
-	// TODO - download the file from the audio url to a temp file
-	// then use the temp file to upload to gemini
-	// then delete the temp file
+	a.logger.Info("Downloading sermon audio", "url", job.AudioURL, "job_id", job.Id)
+	tmpFile, err := downloadFile(job.AudioURL, job.Id)
+	if err != nil {
+		return AnalysisResult{}, err
+	}
+	defer tmpFile.Close()
+	a.logger.Info("Audio downloaded", "job_id", job.Id, "file", tmpFile.Name())
 
-	file, err := a.client.Files.UploadFromPath(a.ctx, "/Users/cory/Downloads/test_sermon.m4a", nil)
+	file, err := a.client.Files.UploadFromPath(a.ctx, "/Users/cory/Downloads/2025.05.25+-+Caleb+-+Building+with+Prayer+-+en.mp3", nil)
 	if err != nil {
 		return AnalysisResult{}, err
 	}
@@ -71,11 +82,15 @@ func (a *sermonAnalyzer) AnalyzeSermon(job models.SermonAnalysisJob) (AnalysisRe
 		genai.NewContentFromParts(parts, genai.RoleUser),
 	}
 
-	resp, err := a.client.Models.GenerateContent(a.ctx, "gemini-2.0-flash", contents, nil)
+	a.logger.Info("Uploading audio to Gemini", "job_id", job.Id)
+	resp, err := a.client.Models.GenerateContent(a.ctx, "gemini-2.5-flash-preview-05-20", contents, &genai.GenerateContentConfig{
+		MaxOutputTokens: 65536,
+	})
 	if err != nil {
 		return AnalysisResult{}, err
 	}
 
+	a.logger.Info("Gemini response", "job_id", job.Id, "response", resp.Text())
 	text := strings.ReplaceAll(resp.Text(), "```json", "")
 	text = strings.ReplaceAll(text, "```", "")
 
@@ -86,4 +101,36 @@ func (a *sermonAnalyzer) AnalyzeSermon(job models.SermonAnalysisJob) (AnalysisRe
 	}
 
 	return result, nil
+}
+
+// downloadFile downloads a file from a url to a temp file
+// NOTE: returned file must be closed by the caller!
+func downloadFile(url string, jobId string) (*os.File, error) {
+	tmpDir := os.TempDir()
+
+	ext := path.Ext(strings.Split(url, "?")[0])
+	tempFile := path.Join(tmpDir, fmt.Sprintf("sermon-%s.%s", jobId, ext))
+
+	out, err := os.Create(tempFile)
+	if err != nil {
+		return nil, err
+	}
+	defer out.Close()
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("bad status: %s", resp.Status)
+	}
+
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return out, nil
 }

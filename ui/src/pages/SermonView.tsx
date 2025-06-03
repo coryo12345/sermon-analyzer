@@ -186,7 +186,7 @@ function SermonNotes({ details }: { details: RecordModel[] }) {
 
   return (
     <div class="bg-surface-800 border border-surface-700 rounded-lg p-6">
-      <h2 class="text-2xl font-bold text-surface-50 mb-6">Details</h2>
+      <h2 class="text-2xl font-bold text-surface-50 mb-6">Notes</h2>
       <div class="space-y-6">
         {details.map((detail) => (
           <div
@@ -222,7 +222,7 @@ function SermonNotes({ details }: { details: RecordModel[] }) {
                   <span class="flex flex-wrap gap-1">
                     {formatVerses(detail.relevant_verses).map((verse) => (
                       <a
-                        href={verseLink(detail.relevant_verses)}
+                        href={verseLink(verse)}
                         target="_blank"
                         rel="noopener noreferrer"
                         class="text-primary-400 cursor-pointer hover:underline"

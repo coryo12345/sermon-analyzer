@@ -22,7 +22,7 @@ func SermonAnalysisJob(app *pocketbase.PocketBase) {
 
 	app.Logger().Info("SermonAnalysisJob: Found sermon jobs", "count", len(sermonJobs))
 	for _, job := range sermonJobs {
-		analyzer, err := ai.NewAnalyzer(job)
+		analyzer, err := ai.NewAnalyzer(job, app.Logger())
 		if err != nil {
 			app.Logger().Error("SermonAnalysisJob: Error creating analyzer", "error", err.Error())
 			setStatus(app, job, models.SermonStatusError)
