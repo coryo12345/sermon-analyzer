@@ -168,7 +168,7 @@ export function SermonView() {
   };
 
   return (
-    <section class="min-h-screen bg-background-900 p-6">
+    <section class="min-h-screen p-6">
       <div class="max-w-4xl mx-auto">{renderContent()}</div>
     </section>
   );

@@ -8,8 +8,12 @@ const RegisterPage = lazy(() =>
   import("./pages/Register.jsx").then((m) => m.Register)
 );
 const HomePage = lazy(() => import("./pages/Home.jsx").then((m) => m.Home));
-const CreatePage = lazy(() => import("./pages/Create.jsx").then((m) => m.Create));
-const SermonViewPage = lazy(() => import("./pages/SermonView.jsx").then((m) => m.SermonView));
+const CreatePage = lazy(() =>
+  import("./pages/Create.jsx").then((m) => m.Create)
+);
+const SermonViewPage = lazy(() =>
+  import("./pages/SermonView.jsx").then((m) => m.SermonView)
+);
 const NotFoundPage = lazy(() =>
   import("./pages/_404.jsx").then((m) => m.NotFound)
 );
@@ -17,8 +21,9 @@ const NotFoundPage = lazy(() =>
 export function AppContent() {
   const location = useLocation();
   const client = getApiClient();
-  
-  const isAuthPage = location.path === "/login" || location.path === "/register";
+
+  const isAuthPage =
+    location.path === "/login" || location.path === "/register";
   const isLoggedIn = client.authStore.isValid;
 
   useEffect(() => {
@@ -30,8 +35,8 @@ export function AppContent() {
 
   return (
     <>
-      {!isAuthPage && <Header />}
-      <main>
+      <main class="bg-background-950 min-h-screen">
+        {!isAuthPage && <Header />}
         <Router>
           <Route path="/" component={HomePage} />
           <Route path="/create" component={CreatePage} />

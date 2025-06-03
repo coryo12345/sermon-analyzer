@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { useState, useEffect } from "preact/hooks";
 import { getApiClient, getErrors } from "../lib/api";
 import { useLocation } from "preact-iso";
 import { ClientResponseError } from "pocketbase";
@@ -14,6 +14,14 @@ export function Register() {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Redirect to home if user is already logged in
+    if (client.authStore.isValid) {
+      window.location.href = "/";
+      return;
+    }
+  }, []);
 
   const signup = async (e: Event) => {
     e.preventDefault();

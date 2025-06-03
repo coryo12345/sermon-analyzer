@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { useState, useEffect } from "preact/hooks";
 import { getApiClient, getErrors } from "../lib/api";
 import { ClientResponseError } from "pocketbase";
 import { Alert } from "../components/Alert";
@@ -10,6 +10,14 @@ export function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Redirect to home if user is already logged in
+    if (client.authStore.isValid) {
+      window.location.href = "/";
+      return;
+    }
+  }, []);
 
   const signin = async (e: Event) => {
     e.preventDefault();

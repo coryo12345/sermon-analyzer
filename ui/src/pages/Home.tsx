@@ -91,10 +91,10 @@ export function Home() {
   };
 
   return (
-    <section class="min-h-screen bg-background-900 p-6">
+    <section class="min-h-screen p-6">
       <div class="max-w-6xl mx-auto">
         <div class="flex justify-between items-center mb-8">
-          <h1 class="text-3xl font-bold text-primary-400">Sermons</h1>
+          <h1 class="text-3xl font-bold text-primary-400">Sermon Analyzer</h1>
           {isAdmin && <Button to="/create">Create Sermon</Button>}
         </div>
 
