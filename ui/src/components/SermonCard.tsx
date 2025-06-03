@@ -1,11 +1,7 @@
+import { RecordModel } from "pocketbase";
+
 interface SermonCardProps {
-  sermon: {
-    id: string;
-    title?: string;
-    date_given?: string;
-    summary?: string;
-    status?: string;
-  };
+  sermon: RecordModel;
   showStatus?: boolean;
 }
 
@@ -43,7 +39,7 @@ export function SermonCard({ sermon, showStatus = false }: SermonCardProps) {
   };
 
   return (
-    <a 
+    <a
       href={`/view?id=${sermon.id}`}
       class="block bg-surface-800 border border-surface-700 rounded-lg p-6 hover:bg-surface-700 transition-colors cursor-pointer"
     >
@@ -51,17 +47,22 @@ export function SermonCard({ sermon, showStatus = false }: SermonCardProps) {
         <h3 class="text-lg font-semibold text-surface-50 leading-tight">
           {sermon.title || "Untitled Sermon"}
         </h3>
+        <div class="text-surface-300 text-sm">
+          {formatDate(sermon.date_given)}
+        </div>
+      </div>
+
+      <div class="flex justify-between items-start mb-3">
+        <div class="text-surface-300 text-sm">{sermon.speaker}</div>
         {showStatus && sermon.status && (
-          <span class={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(sermon.status)}`}>
+          <span
+            class={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(sermon.status)}`}
+          >
             {sermon.status}
           </span>
         )}
       </div>
-      
-      <div class="text-surface-300 text-sm mb-3">
-        {formatDate(sermon.date_given)}
-      </div>
-      
+
       {sermon.summary && (
         <p class="text-surface-200 text-sm leading-relaxed">
           {truncateText(sermon.summary)}

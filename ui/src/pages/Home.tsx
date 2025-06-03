@@ -3,6 +3,7 @@ import { getApiClient } from "../lib/api";
 import { SermonCard } from "../components/SermonCard";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import { Button } from "../components/Button";
+import { RecordModel } from "pocketbase";
 
 interface Sermon {
   id: string;
@@ -13,11 +14,11 @@ interface Sermon {
 }
 
 export function Home() {
-  const [sermons, setSermons] = useState<Sermon[]>([]);
+  const [sermons, setSermons] = useState<RecordModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const client = getApiClient();
-  
+
   const isAdmin = client.authStore.record?.role === "admin";
 
   useEffect(() => {
@@ -25,15 +26,15 @@ export function Home() {
       try {
         setLoading(true);
         setError(null);
-        
-        const result = await client.collection('sermons').getList(1, 50, {
-          sort: '-date_given,-created',
+
+        const result = await client.collection("sermons").getList(1, 50, {
+          sort: "-date_given,-created",
         });
-        
+
         setSermons(result.items);
       } catch (err) {
-        console.error('Failed to fetch sermons:', err);
-        setError('Failed to load sermons. Please try again later.');
+        console.error("Failed to fetch sermons:", err);
+        setError("Failed to load sermons. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -55,8 +56,8 @@ export function Home() {
       return (
         <div class="bg-error-900 border border-error-700 rounded-lg p-6 text-center">
           <p class="text-error-300">{error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             class="mt-4 px-4 py-2 bg-error-600 hover:bg-error-500 text-error-50 rounded-md transition-colors"
           >
             Try Again
@@ -83,11 +84,7 @@ export function Home() {
     return (
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sermons.map((sermon) => (
-          <SermonCard 
-            key={sermon.id} 
-            sermon={sermon} 
-            showStatus={isAdmin}
-          />
+          <SermonCard key={sermon.id} sermon={sermon} showStatus={isAdmin} />
         ))}
       </div>
     );
@@ -98,13 +95,9 @@ export function Home() {
       <div class="max-w-6xl mx-auto">
         <div class="flex justify-between items-center mb-8">
           <h1 class="text-3xl font-bold text-primary-400">Sermons</h1>
-          {isAdmin && (
-            <Button to="/create">
-              Create Sermon
-            </Button>
-          )}
+          {isAdmin && <Button to="/create">Create Sermon</Button>}
         </div>
-        
+
         {renderContent()}
       </div>
     </section>
