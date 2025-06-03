@@ -1,9 +1,8 @@
-import { useEffect, useState } from "preact/hooks";
-import { useLocation } from "preact-iso";
-import { getApiClient } from "../lib/api";
-import { LoadingSpinner } from "../components/LoadingSpinner";
-import { Button } from "../components/Button";
 import { RecordModel } from "pocketbase";
+import { useEffect, useState } from "preact/hooks";
+import { LoadingSpinner } from "../components/LoadingSpinner";
+import { getApiClient } from "../lib/api";
+import { Alert } from "../components/Alert";
 
 export function SermonView() {
   const [sermon, setSermon] = useState<RecordModel | null>(null);
@@ -67,6 +66,71 @@ export function SermonView() {
     fetchSermonData();
   }, [sermonId]);
 
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div class="flex justify-center items-center h-64">
+          <LoadingSpinner size="lg" />
+        </div>
+      );
+    }
+
+    if (error || !sermon) {
+      return (
+        <div class="text-center py-12">
+          <div class="text-6xl mb-4">😕</div>
+          <h2 class="text-xl font-semibold text-surface-100 mb-2">
+            Sermon not found
+          </h2>
+          <p class="text-surface-400 mb-6">
+            This sermon may not exist or you don't have permission to view it.
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div class="space-y-2 sm:space-y-4 md:space-y-8">
+        <Alert
+          type="info"
+          title="This sermon was analyzed by AI"
+          message="Do not rely on the accuracy of the content for biblical truth. It is a helpful tool to help you understand the sermon, but should not be used as a substitute for your own studying & research."
+        />
+
+        <SermonSummary sermon={sermon} isAdmin={isAdmin} />
+
+        {details.length > 0 && <SermonNotes details={details} />}
+
+        {questions.length > 0 && <SermonQuestions questions={questions} />}
+
+        {details.length === 0 &&
+          questions.length === 0 &&
+          sermon.status === "complete" && (
+            <div class="bg-surface-800 border border-surface-700 rounded-lg p-8 text-center">
+              <p class="text-surface-300">
+                No additional details or questions available for this sermon.
+              </p>
+            </div>
+          )}
+      </div>
+    );
+  };
+
+  return (
+    <section class="min-h-screen p-2 md:p-6">
+      <div class="max-w-4xl mx-auto">{renderContent()}</div>
+      {/* TODO add a button to go back to top */}
+    </section>
+  );
+}
+
+function SermonSummary({
+  sermon,
+  isAdmin,
+}: {
+  sermon: RecordModel;
+  isAdmin: boolean;
+}) {
   const formatDate = (dateString?: string) => {
     if (!dateString) return "No date";
     try {
@@ -94,83 +158,37 @@ export function SermonView() {
     }
   };
 
-  const renderContent = () => {
-    if (loading) {
-      return (
-        <div class="flex justify-center items-center h-64">
-          <LoadingSpinner size="lg" />
-        </div>
-      );
-    }
-
-    if (error || !sermon) {
-      return (
-        <div class="text-center py-12">
-          <div class="text-6xl mb-4">😕</div>
-          <h2 class="text-xl font-semibold text-surface-100 mb-2">
-            Sermon not found
-          </h2>
-          <p class="text-surface-400 mb-6">
-            This sermon may not exist or you don't have permission to view it.
-          </p>
-        </div>
-      );
-    }
-
-    return (
-      <div class="space-y-8">
-        <div class="bg-surface-800 border border-surface-700 rounded-lg p-6">
-          <div class="flex justify-between items-start mb-4">
-            <h1 class="text-3xl font-bold text-surface-50">
-              {sermon.title || "Untitled Sermon"}
-            </h1>
-            <div class="text-surface-300">
-              <p>Date: {formatDate(sermon.date_given)}</p>
-            </div>
-          </div>
-
-          <div class="flex justify-between items-start mb-4">
-            <div class="text-surface-300">{sermon.speaker}</div>
-            {isAdmin && sermon.status && (
-              <span
-                class={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(sermon.status)}`}
-              >
-                {sermon.status}
-              </span>
-            )}
-          </div>
-
-          {sermon.summary && (
-            <div>
-              <h3 class="text-lg font-semibold text-surface-100 mb-2">
-                Summary
-              </h3>
-              <p class="text-surface-200 leading-relaxed">{sermon.summary}</p>
-            </div>
-          )}
-        </div>
-
-        {details.length > 0 && <SermonNotes details={details} />}
-
-        {questions.length > 0 && <SermonQuestions questions={questions} />}
-
-        {details.length === 0 &&
-          questions.length === 0 &&
-          sermon.status === "complete" && (
-            <div class="bg-surface-800 border border-surface-700 rounded-lg p-8 text-center">
-              <p class="text-surface-300">
-                No additional details or questions available for this sermon.
-              </p>
-            </div>
-          )}
-      </div>
-    );
-  };
-
   return (
-    <section class="min-h-screen p-6">
-      <div class="max-w-4xl mx-auto">{renderContent()}</div>
-    </section>
+    <div class="bg-surface-800 border border-surface-700 rounded-lg p-3 md:p-6">
+      <div class="flex justify-between gap-2 items-start mb-4">
+        <h1 class="text-3xl font-bold text-surface-50">
+          {sermon.title || "Untitled Sermon"}
+        </h1>
+        <div class="text-surface-300">
+          <p aria-label="Date given">{formatDate(sermon.date_given)}</p>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-start mb-4">
+        <p aria-label="Speaker" class="text-surface-300">
+          {sermon.speaker}
+        </p>
+        {isAdmin && sermon.status && (
+          <span
+            class={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(sermon.status)}`}
+          >
+            {sermon.status}
+          </span>
+        )}
+      </div>
+
+      {sermon.summary && (
+        <div>
+          <h3 class="text-lg font-semibold text-surface-100 mb-2">Summary</h3>
+          <p class="text-surface-200 leading-relaxed">{sermon.summary}</p>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -185,13 +203,13 @@ function SermonNotes({ details }: { details: RecordModel[] }) {
   };
 
   return (
-    <div class="bg-surface-800 border border-surface-700 rounded-lg p-6">
+    <div class="bg-surface-800 border border-surface-700 rounded-lg p-3 md:p-6">
       <h2 class="text-2xl font-bold text-surface-50 mb-6">Notes</h2>
       <div class="space-y-6">
         {details.map((detail) => (
           <div
             key={detail.id}
-            class="bg-surface-700 rounded-lg py-2 border-l-8 border-primary-500 pl-4"
+            class="bg-surface-700 rounded-lg py-2 border-primary-500 px-2 md:pl-4 md:border-l-8"
           >
             <h3 class="text-lg font-semibold text-surface-100 mb-2">
               {detail.title}
@@ -242,7 +260,7 @@ function SermonNotes({ details }: { details: RecordModel[] }) {
 
 function SermonQuestions({ questions }: { questions: RecordModel[] }) {
   return (
-    <div class="bg-surface-800 border border-surface-700 rounded-lg p-6">
+    <div class="bg-surface-800 border border-surface-700 rounded-lg p-3 md:p-6">
       <h2 class="text-2xl font-bold text-surface-50 mb-6">
         Discussion Questions
       </h2>
