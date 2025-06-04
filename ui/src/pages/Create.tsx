@@ -28,16 +28,18 @@ export function Create() {
     setLoading(true);
 
     try {
-      // TODO: Implement sermon creation logic
-      console.log("Creating sermon with:", {
-        title,
+      const sermon = await client.collection("sermons").create({
+        title: title,
         date_given: date,
-        speaker,
+        status: "created",
+        speaker: speaker,
+      });
+      const job = await client.collection("analysis_jobs").create({
+        sermon_id: sermon.id,
         audio_url: audioUrl,
       });
 
-      // Placeholder for now - this will be implemented later
-      alert("Sermon creation functionality to be implemented");
+      window.location.href = '/';
     } catch (err) {
       const errs = getErrors(err as ClientResponseError);
       setError(errs?.[0] || "Failed to create sermon. Please try again.");

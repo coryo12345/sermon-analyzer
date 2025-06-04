@@ -1,11 +1,11 @@
 # Sermon Analyzer
 
 ## TODO:
-* Implement create sermon form
-* regex/formatting on bold/italic
+* fix datetime on create form
 * Allow admins to delete sermons
 * allow admins to re-run sermon analysis
 * test on mobile
 * set up pwa
 * find mail provider
-* research deploying? sst?
+* create docker env
+* deploy to fly.io

@@ -68,7 +68,7 @@ func (a *sermonAnalyzer) AnalyzeSermon(job models.SermonAnalysisJob) (AnalysisRe
 	defer tmpFile.Close()
 	a.logger.Info("Audio downloaded", "job_id", job.Id, "file", tmpFile.Name())
 
-	file, err := a.client.Files.UploadFromPath(a.ctx, "/Users/cory/Downloads/2025.05.25+-+Caleb+-+Building+with+Prayer+-+en.mp3", nil)
+	file, err := a.client.Files.UploadFromPath(a.ctx, tmpFile.Name(), nil)
 	if err != nil {
 		return AnalysisResult{}, err
 	}

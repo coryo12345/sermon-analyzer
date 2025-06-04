@@ -17,11 +17,10 @@ Not all sermons will contain all of these things, and some may do things differe
 You are going to respond with 3 things:
 1. A short summary of the sermon. At most 6 sentences.
 2. A list of notes about the contents of the sermon
-    - Do NOT just provide a full transcript of what was said.
+    - Do NOT just provide a full transcript of what was said, but MAKE SURE to include notes on all parts of the sermon. Do not leave pieces out.
     - Break up the sermon into logical groups based on the contents and what was said, or by the verses being read. You will need to be really intelligent here in determining how to organize this. Think about making a study guide for a class, how would you break up notes to keep things organized?
     - Highlight the key points in each section, reference the important things that were mentioned. 
     - Include any relevant verses presented for this section. Do NOT write out the verses themselves. Example: "Matt 5:12", "Gen 1:1" or "1 John 1:9" ... Not the content of the verses!
-    - Be practical with the length of the notes, a 20 minute sermon should have more than 6 sentences of notes. But a 20 second clip probably would only have 1 section with 1-2 bullet points.
     - Be sure to put any final practical application points from the end of the sermon together in a section.
 3. Come up with some practical discussion questions, or discussion topics. The kinds of questions would a small group leader would ask the group to facilitate discussion about the contents of the message.
     - Depending on the length of the sermon, come up with 1-10 questions. A short 30 second clip could only have one, but a 30 minute+ sermon should have closer to 10.
@@ -35,7 +34,7 @@ When you respond, provide your answers in valid JSON, in the following format:
     "notes": [
         {
             title: "A short 1 sentence title of what this section of the sermon is about",
-            description: "The main part of the notes as described above goes here. Please Use newlines & other whitespace characters to help organize this.",
+            description: "The main part of the notes as described above goes here. Please Use newlines & other whitespace characters to help organize this and break up thoughts. Other text or markdown is not supported. Do not use asterisks to indicate text styling",
             key_verse: "The key section of verses from the main passage (if there is one) that were covered in this section. E.g. 'Matt 5:4-9'",
             relevant_verses: "Any other verses that may have been referenced to support the points made, but aren't the key verses. Format this is a pipe separated list. E.g. 'Gen 1:1-3|Num 6:12|Rev 3:8-4'",
         }
