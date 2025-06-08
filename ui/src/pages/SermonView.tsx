@@ -5,6 +5,7 @@ import { getApiClient } from "../lib/api";
 import { Alert } from "../components/Alert";
 import { Button } from "../components/Button";
 import { BackToTop } from "../components/BackToTop";
+import { AreYouSure } from "../components/AreYouSure";
 
 export function SermonView() {
   const [sermon, setSermon] = useState<RecordModel | null>(null);
@@ -20,6 +21,48 @@ export function SermonView() {
   const params = new URLSearchParams(window.location.search);
   const sermonId = params.get("id");
 
+  const fetchSermonData = async () => {
+    if (!sermonId) return;
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Fetch sermon
+      const sermonResult = await client.collection("sermons").getOne(sermonId);
+      setSermon(sermonResult);
+
+      // Fetch sermon details
+      const detailsResult = await client
+        .collection("sermon_details")
+        .getList(1, 50, {
+          filter: `sermon_id="${sermonId}"`,
+          sort: "order",
+        });
+      setDetails(detailsResult.items);
+
+      // Fetch sermon questions
+      const questionsResult = await client
+        .collection("sermon_questions")
+        .getList(1, 50, {
+          filter: `sermon_id="${sermonId}"`,
+          sort: "order",
+        });
+      setQuestions(questionsResult.items);
+    } catch (err) {
+      console.error("Failed to fetch sermon:", err);
+      setError(
+        "Failed to load sermon. It may not exist or you may not have permission to view it."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteSermon = async () => {
+    // TODO
+    window.location.href = "/";
+  };
+
   useEffect(() => {
     if (!sermonId) {
       setError("No sermon ID provided");
@@ -27,47 +70,8 @@ export function SermonView() {
       return;
     }
 
-    const fetchSermonData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        // Fetch sermon
-        const sermonResult = await client
-          .collection("sermons")
-          .getOne(sermonId);
-        setSermon(sermonResult);
-
-        // Fetch sermon details
-        const detailsResult = await client
-          .collection("sermon_details")
-          .getList(1, 50, {
-            filter: `sermon_id="${sermonId}"`,
-            sort: "order",
-          });
-        setDetails(detailsResult.items);
-
-        // Fetch sermon questions
-        const questionsResult = await client
-          .collection("sermon_questions")
-          .getList(1, 50, {
-            filter: `sermon_id="${sermonId}"`,
-            sort: "order",
-          });
-        setQuestions(questionsResult.items);
-      } catch (err) {
-        console.error("Failed to fetch sermon:", err);
-        setError(
-          "Failed to load sermon. It may not exist or you may not have permission to view it."
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchSermonData();
   }, [sermonId]);
-
 
   const renderContent = () => {
     if (loading) {
@@ -104,8 +108,18 @@ export function SermonView() {
           </div>
           {isAdmin && sermon && (
             <div class="flex flex-col space-y-2 shrink-0">
-              <Button onClick={() => window.location.href = `/edit?id=${sermon.id}`}>Edit</Button>
-              <Button variant="danger" onClick={() => {}}>Delete</Button>
+              <Button
+                onClick={() => (window.location.href = `/edit?id=${sermon.id}`)}
+              >
+                Edit
+              </Button>
+              <AreYouSure
+                buttonProps={{ variant: "danger" }}
+                title="Are you sure you want to delete this sermon?"
+                onConfirm={() => {}}
+              >
+                Delete
+              </AreYouSure>
             </div>
           )}
         </div>

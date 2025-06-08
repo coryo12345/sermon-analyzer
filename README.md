@@ -2,7 +2,6 @@
 
 ## MVP TODO:
 * Allow admins to delete sermons
-* allow admins to edit sermon content
 * allow admins to re-run sermon analysis
 * add search functionality to find sermons
 * add a way to see who is signed in & option to delete account
