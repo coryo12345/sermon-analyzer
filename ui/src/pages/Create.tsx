@@ -28,9 +28,18 @@ export function Create() {
     setLoading(true);
 
     try {
+      // Convert date to UTC with 10am EST time
+      let utcDate = date;
+      if (date) {
+        const localDate = new Date(date + 'T10:00:00');
+        // Convert from EST (UTC-5) to UTC
+        localDate.setHours(localDate.getHours() + 5);
+        utcDate = localDate.toISOString();
+      }
+
       const sermon = await client.collection("sermons").create({
         title: title,
-        date_given: date,
+        date_given: utcDate,
         status: "created",
         speaker: speaker,
       });
