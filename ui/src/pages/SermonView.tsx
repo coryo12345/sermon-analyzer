@@ -3,6 +3,8 @@ import { useEffect, useState } from "preact/hooks";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import { getApiClient } from "../lib/api";
 import { Alert } from "../components/Alert";
+import { Button } from "../components/Button";
+import { BackToTop } from "../components/BackToTop";
 
 export function SermonView() {
   const [sermon, setSermon] = useState<RecordModel | null>(null);
@@ -10,7 +12,6 @@ export function SermonView() {
   const [questions, setQuestions] = useState<RecordModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showBackToTop, setShowBackToTop] = useState(false);
 
   const client = getApiClient();
   const isAdmin = client.authStore.record?.role === "admin";
@@ -67,19 +68,6 @@ export function SermonView() {
     fetchSermonData();
   }, [sermonId]);
 
-  // Handle scroll detection for back to top button
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowBackToTop(window.scrollY > 300);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
 
   const renderContent = () => {
     if (loading) {
@@ -106,11 +94,21 @@ export function SermonView() {
 
     return (
       <div class="space-y-2 sm:space-y-4 md:space-y-8">
-        <Alert
-          type="info"
-          title="This sermon was analyzed by AI"
-          message="Do not rely on the accuracy of the content for biblical truth. It is a helpful tool to help you understand the sermon, but should not be used as a substitute for your own studying & research."
-        />
+        <div class="flex justify-center items-center gap-4 flex-wrap">
+          <div class="grow">
+            <Alert
+              type="info"
+              title="This sermon was analyzed by AI"
+              message="Do not rely on the accuracy of the content for biblical truth. It is a helpful tool to help you understand the sermon, but should not be used as a substitute for your own studying & research."
+            />
+          </div>
+          {isAdmin && sermon && (
+            <div class="flex flex-col space-y-2 shrink-0">
+              <Button onClick={() => window.location.href = `/edit?id=${sermon.id}`}>Edit</Button>
+              <Button variant="danger" onClick={() => {}}>Delete</Button>
+            </div>
+          )}
+        </div>
 
         <SermonSummary sermon={sermon} isAdmin={isAdmin} />
 
@@ -134,28 +132,7 @@ export function SermonView() {
   return (
     <section class="min-h-screen p-2 md:p-6">
       <div class="max-w-4xl mx-auto">{renderContent()}</div>
-      {showBackToTop && (
-        <button
-          onClick={scrollToTop}
-          class="fixed bottom-6 right-6 bg-primary-600 hover:bg-primary-700 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50 cursor-pointer"
-          aria-label="Back to top"
-        >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M5 10l7-7m0 0l7 7m-7-7v18"
-            />
-          </svg>
-        </button>
-      )}
+      <BackToTop />
     </section>
   );
 }

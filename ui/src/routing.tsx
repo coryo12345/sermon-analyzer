@@ -14,6 +14,9 @@ const CreatePage = lazy(() =>
 const SermonViewPage = lazy(() =>
   import("./pages/SermonView.jsx").then((m) => m.SermonView)
 );
+const EditPage = lazy(() =>
+  import("./pages/Edit.jsx").then((m) => m.Edit)
+);
 const NotFoundPage = lazy(() =>
   import("./pages/_404.jsx").then((m) => m.NotFound)
 );
@@ -41,6 +44,7 @@ export function AppContent() {
           <Route path="/" component={HomePage} />
           <Route path="/create" component={CreatePage} />
           <Route path="/view" component={SermonViewPage} />
+          <Route path="/edit" component={EditPage} />
           <Route path="/login" component={LoginPage} />
           <Route path="/register" component={RegisterPage} />
           <Route default component={NotFoundPage} />
