@@ -3,7 +3,10 @@ import { forwardRef } from "preact/compat";
 import { JSX } from "preact";
 
 export interface ButtonProps
-  extends Omit<JSX.HTMLAttributes<HTMLButtonElement | HTMLAnchorElement>, "type" | "disabled"> {
+  extends Omit<
+    JSX.HTMLAttributes<HTMLButtonElement | HTMLAnchorElement>,
+    "type" | "disabled"
+  > {
   children: ComponentChildren;
   type?: "button" | "submit" | "reset";
   variant?: "primary" | "secondary" | "danger" | "ghost";
@@ -13,7 +16,10 @@ export interface ButtonProps
   to?: string;
 }
 
-export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
+export const Button = forwardRef<
+  HTMLButtonElement | HTMLAnchorElement,
+  ButtonProps
+>(
   (
     {
       children,
@@ -103,7 +109,11 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
     const content = (
       <>
         {loading && <Spinner />}
-        <span class={loading ? "opacity-75" : ""}>{children}</span>
+        <span
+          class={`flex items-center justify-center ${loading ? "opacity-75" : ""}`}
+        >
+          {children}
+        </span>
       </>
     );
 

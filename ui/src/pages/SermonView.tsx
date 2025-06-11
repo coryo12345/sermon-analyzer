@@ -3,9 +3,9 @@ import { useEffect, useState } from "preact/hooks";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import { getApiClient } from "../lib/api";
 import { Alert } from "../components/Alert";
-import { Button } from "../components/Button";
 import { BackToTop } from "../components/BackToTop";
 import { AreYouSure } from "../components/AreYouSure";
+import { Dropdown } from "../components/Dropdown";
 
 export function SermonView() {
   const [sermon, setSermon] = useState<RecordModel | null>(null);
@@ -107,19 +107,39 @@ export function SermonView() {
             />
           </div>
           {isAdmin && sermon && (
-            <div class="flex flex-col space-y-2 shrink-0">
-              <Button
-                onClick={() => (window.location.href = `/edit?id=${sermon.id}`)}
+            <div class="shrink-0">
+              <Dropdown
+                variant="secondary"
+                size="md"
+                placement="bottom-end"
+                menuContent={
+                  <>
+                    <li
+                      onClick={() =>
+                        (window.location.href = `/edit?id=${sermon.id}`)
+                      }
+                      role="menuitem"
+                    >
+                      Edit
+                    </li>
+                    <li role="menuitem" class="!p-0">
+                      <AreYouSure
+                        buttonProps={{
+                          variant: "ghost",
+                          className:
+                            "w-full !justify-start !px-4 !py-2 !text-error-600 !dark:text-error-400 hover:!bg-transparent !rounded-none",
+                        }}
+                        title="Are you sure you want to delete this sermon?"
+                        onConfirm={deleteSermon}
+                      >
+                        Delete
+                      </AreYouSure>
+                    </li>
+                  </>
+                }
               >
-                Edit
-              </Button>
-              <AreYouSure
-                buttonProps={{ variant: "danger" }}
-                title="Are you sure you want to delete this sermon?"
-                onConfirm={() => {}}
-              >
-                Delete
-              </AreYouSure>
+                Actions
+              </Dropdown>
             </div>
           )}
         </div>
