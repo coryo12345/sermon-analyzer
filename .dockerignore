@@ -1,0 +1,9 @@
+audio-fetcher/
+ui/node_modules/
+ui/dist/
+*.out
+*.env
+api/tmp/
+api/pb_data/
+.vscode/
+.claude/

@@ -28,6 +28,7 @@ func main() {
 	})
 
 	// serves static files from the provided public dir (if exists)
+	// this is how the ui gets served in production
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
 		se.Router.GET("/{path...}", apis.Static(os.DirFS("./pb_public"), false))
 		return se.Next()

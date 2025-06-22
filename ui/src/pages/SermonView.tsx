@@ -34,20 +34,20 @@ export function SermonView() {
       // Fetch sermon details
       const detailsResult = await client
         .collection("sermon_details")
-        .getList(1, 50, {
+        .getFullList({
           filter: `sermon_id="${sermonId}"`,
           sort: "order",
         });
-      setDetails(detailsResult.items);
+      setDetails(detailsResult);
 
       // Fetch sermon questions
       const questionsResult = await client
         .collection("sermon_questions")
-        .getList(1, 50, {
+        .getFullList({
           filter: `sermon_id="${sermonId}"`,
           sort: "order",
         });
-      setQuestions(questionsResult.items);
+      setQuestions(questionsResult);
     } catch (err) {
       console.error("Failed to fetch sermon:", err);
       setError(
@@ -59,7 +59,10 @@ export function SermonView() {
   };
 
   const deleteSermon = async () => {
-    // TODO
+    if (!sermonId) return;
+    setLoading(true);
+    await client.collection("sermons").update(sermonId, { status: "deleted" });
+    setLoading(false);
     window.location.href = "/";
   };
 

@@ -1,14 +1,15 @@
 # Sermon Analyzer
 
 ## MVP TODO:
-* Allow admins to delete sermons
-* add search functionality to find sermons
 * add a way to see who is signed in & option to delete account
 * test on mobile
-* setup oauth login for google/apple etc...
 * set up pwa
+* setup oauth login for google/apple etc...
 * find mail provider (Brevo / Mailersend)
+* test emails
 * create docker env
+* squash migrations
+* set "APP_ENV" env variable to configure stuff like auto-migrate
 * deploy to fly.io
 
 ## Nice to haves
