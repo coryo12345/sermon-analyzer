@@ -41,6 +41,8 @@ func main() {
 		}
 		e.App.Settings().Meta.AppName = "Sermon Analysis"
 		e.App.Settings().Meta.AppURL = os.Getenv("APP_URL")
+		e.App.Settings().Meta.SenderAddress = "noreply@sermon.corydio.com"
+		e.App.Settings().Meta.SenderName = "Sermon Analysis"
 		return nil
 	})
 
