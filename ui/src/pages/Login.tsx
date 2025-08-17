@@ -3,6 +3,7 @@ import { getApiClient, getErrors } from "../lib/api";
 import { ClientResponseError } from "pocketbase";
 import { Alert } from "../components/Alert";
 import { Button } from "../components/Button";
+import { GoogleIcon } from "../components/icons/GoogleIcon";
 
 export function Login() {
   const client = getApiClient();
@@ -33,6 +34,26 @@ export function Login() {
     } catch (err) {
       const errs = getErrors(err as ClientResponseError);
       setError(errs?.[0] || "Please check your information and try again");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const oauth = async (provider: "google") => {
+    try {
+      setError(null);
+      setLoading(true);
+      const resp = await client
+        .collection("users")
+        .authWithOAuth2({ provider: provider });
+      if (resp.record.id) {
+        window.location.href = "/";
+      } else {
+        setError("Failed to sign in. Please try again later.");
+      }
+    } catch (err) {
+      const errs = getErrors(err as ClientResponseError);
+      setError(errs?.[0] || "Failed to sign in. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -119,6 +140,29 @@ export function Login() {
             <div>
               <Button type="submit" loading={loading} className="w-full">
                 Sign in
+              </Button>
+            </div>
+
+            <div class="relative">
+              <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-surface-300 dark:border-surface-600" />
+              </div>
+              <div class="relative flex justify-center text-sm">
+                <span class="px-2 bg-white dark:bg-surface-900 text-surface-500 dark:text-surface-400">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full border border-surface-300 dark:border-surface-600"
+                onClick={() => oauth("google")}
+              >
+                <GoogleIcon className="mr-3" />
+                Sign in with Google
               </Button>
             </div>
 

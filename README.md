@@ -3,7 +3,6 @@
 ## MVP TODO:
 * build user details screen (w/ option to delete account)
 * test on mobile
-* set up pwa
 * find mail provider (Brevo / Mailersend)
 * test emails
     - 1. email confirmation
@@ -14,10 +13,10 @@
 * set "APP_ENV" env variable to configure stuff like auto-migrate
 * deploy to fly.io
 
-## Nice to haves
+## Next Up: Nice to haves
+* set up pwa
 * allow admins to re-run sermon analysis (will need job types)
 
-## 1.0
+## Long Term Future Tasks
 * Astro with site homepage
 * figure out user "groupings"
-* setup oauth login for google/apple etc...
