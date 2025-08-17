@@ -27,6 +27,8 @@ func main() {
 		}
 	}
 
+	log.Println("Starting sermon-analyzer API in ", os.Getenv("APP_ENV"), " mode")
+
 	app := pocketbase.New()
 
 	migratecmd.MustRegister(app, app.RootCmd, migratecmd.Config{
