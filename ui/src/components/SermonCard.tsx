@@ -1,4 +1,5 @@
 import { RecordModel } from "pocketbase";
+import { utils } from "../lib/utils";
 
 interface SermonCardProps {
   sermon: RecordModel;
@@ -58,7 +59,7 @@ export function SermonCard({ sermon, showStatus = false }: SermonCardProps) {
           <span
             class={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(sermon.status)}`}
           >
-            {sermon.status}
+            {utils.capitalize(sermon.status)}
           </span>
         )}
       </div>

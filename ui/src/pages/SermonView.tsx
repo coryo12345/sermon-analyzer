@@ -6,6 +6,7 @@ import { Alert } from "../components/Alert";
 import { BackToTop } from "../components/BackToTop";
 import { AreYouSure } from "../components/AreYouSure";
 import { Dropdown } from "../components/Dropdown";
+import { utils } from "../lib/utils";
 
 export function SermonView() {
   const [sermon, setSermon] = useState<RecordModel | null>(null);
@@ -227,7 +228,7 @@ function SermonSummary({
           <span
             class={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(sermon.status)}`}
           >
-            {sermon.status}
+            {utils.capitalize(sermon.status)}
           </span>
         )}
       </div>

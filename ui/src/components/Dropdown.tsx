@@ -208,27 +208,48 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
             ) : (
               items && (
                 <div class="py-1">
-                  {items.map((item) => (
-                    <button
-                      key={item.key}
-                      class={`
-                        w-full text-left px-4 py-2 text-sm
-                        transition-colors duration-150
-                        ${
-                          item.disabled
-                            ? "text-surface-400 cursor-not-allowed"
-                            : "text-background-900 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 focus:bg-surface-100 dark:focus:bg-surface-700 cursor-pointer"
-                        }
-                        focus:outline-none
-                        ${item.className || ""}
-                      `}
-                      disabled={item.disabled}
-                      onClick={() => handleItemClick(item)}
-                      role="menuitem"
-                    >
-                      {item.label}
-                    </button>
-                  ))}
+                  {items.map((item) => {
+                    // If no onClick function, render as non-interactive text
+                    if (!item.onClick) {
+                      return (
+                        <div
+                          key={item.key}
+                          class={`
+                            w-full text-left px-4 py-2 text-sm
+                            text-surface-500 dark:text-surface-400
+                            ${item.className || ""}
+                          `}
+                          role="menuitem"
+                          aria-disabled="true"
+                        >
+                          {item.label}
+                        </div>
+                      );
+                    }
+
+                    // Render as interactive button if onClick is provided
+                    return (
+                      <button
+                        key={item.key}
+                        class={`
+                          w-full text-left px-4 py-2 text-sm
+                          transition-colors duration-150
+                          ${
+                            item.disabled
+                              ? "text-surface-400 cursor-not-allowed"
+                              : "text-background-900 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 focus:bg-surface-100 dark:focus:bg-surface-700 cursor-pointer"
+                          }
+                          focus:outline-none
+                          ${item.className || ""}
+                        `}
+                        disabled={item.disabled}
+                        onClick={() => handleItemClick(item)}
+                        role="menuitem"
+                      >
+                        {item.label}
+                      </button>
+                    );
+                  })}
                 </div>
               )
             )}

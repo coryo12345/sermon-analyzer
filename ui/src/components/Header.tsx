@@ -1,14 +1,7 @@
-import { getApiClient } from "../lib/api";
-import { Button } from "./Button";
 import { SermonSearch } from "./SermonSearch";
+import { AccountMenu } from "./AccountMenu";
 
 export function Header() {
-  const client = getApiClient();
-
-  const logout = () => {
-    client.authStore.clear();
-    window.location.href = "/login";
-  };
 
   return (
     <header className="bg-background-900 border-b border-surface-700">
@@ -23,9 +16,7 @@ export function Header() {
           <div className="flex-1 max-w-md">
             <SermonSearch />
           </div>
-          <Button variant="ghost" onClick={logout} className="flex-shrink-0">
-            Sign Out
-          </Button>
+          <AccountMenu className="flex-shrink-0" />
         </div>
       </nav>
     </header>
