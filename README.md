@@ -6,6 +6,7 @@
     - 2. password reset
 * create docker env
 * deploy to fly.io
+    - Need to follow instructions for rate limiting
 
 ## Next Up: Nice to haves
 * set up pwa

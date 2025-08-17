@@ -44,6 +44,7 @@ func main() {
 		e.App.Settings().Meta.SenderAddress = "noreply@sermon.corydio.com"
 		e.App.Settings().Meta.SenderName = "Sermon Analysis"
 		e.App.Settings().Meta.HideControls = os.Getenv("APP_ENV") == "production" || os.Getenv("APP_ENV") == "prod"
+		e.App.Settings().RateLimits.Enabled = true
 		return nil
 	})
 
