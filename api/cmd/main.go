@@ -24,7 +24,7 @@ func main() {
 	app := pocketbase.New()
 
 	migratecmd.MustRegister(app, app.RootCmd, migratecmd.Config{
-		Automigrate: true,
+		Automigrate: os.Getenv("APP_ENV") == "development" || os.Getenv("APP_ENV") == "dev",
 	})
 
 	// serves static files from the provided public dir (if exists)
@@ -43,6 +43,7 @@ func main() {
 		e.App.Settings().Meta.AppURL = os.Getenv("APP_URL")
 		e.App.Settings().Meta.SenderAddress = "noreply@sermon.corydio.com"
 		e.App.Settings().Meta.SenderName = "Sermon Analysis"
+		e.App.Settings().Meta.HideControls = os.Getenv("APP_ENV") == "production" || os.Getenv("APP_ENV") == "prod"
 		return nil
 	})
 

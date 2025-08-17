@@ -5,8 +5,6 @@
     - 1. email confirmation (acct managerment)
     - 2. password reset
 * create docker env
-* squash migrations
-* set "APP_ENV" env variable to configure stuff like auto-migrate
 * deploy to fly.io
 
 ## Next Up: Nice to haves
