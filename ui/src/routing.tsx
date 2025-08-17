@@ -20,6 +20,9 @@ const EditPage = lazy(() =>
 const SearchResultsPage = lazy(() =>
   import("./pages/SearchResults.jsx").then((m) => m.SearchResults)
 );
+const ManageAccountPage = lazy(() =>
+  import("./pages/ManageAccount.jsx").then((m) => m.ManageAccount)
+);
 const NotFoundPage = lazy(() =>
   import("./pages/_404.jsx").then((m) => m.NotFound)
 );
@@ -51,6 +54,7 @@ export function AppContent() {
           <Route path="/search" component={SearchResultsPage} />
           <Route path="/login" component={LoginPage} />
           <Route path="/register" component={RegisterPage} />
+          <Route path="/account" component={ManageAccountPage} />
           <Route default component={NotFoundPage} />
         </Router>
       </main>

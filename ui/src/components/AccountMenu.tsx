@@ -15,8 +15,7 @@ export function AccountMenu({ className = "" }: AccountMenuProps) {
   };
 
   const handleManageAccount = () => {
-    // Stub for now - will be implemented later
-    console.log("Manage account clicked");
+    window.location.href = "/account";
   };
 
   const menuItems = [
