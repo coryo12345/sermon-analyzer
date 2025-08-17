@@ -1,13 +1,9 @@
 # Sermon Analyzer
 
 ## MVP TODO:
-* build user details screen (w/ option to delete account)
-* test on mobile
-* find mail provider (Brevo / Mailersend)
-* test emails
-    - 1. email confirmation
-    - 2. password reset,
-    - 3. etc...
+* config email sending
+    - 1. email confirmation (acct managerment)
+    - 2. password reset
 * create docker env
 * squash migrations
 * set "APP_ENV" env variable to configure stuff like auto-migrate
