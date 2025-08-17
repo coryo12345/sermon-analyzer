@@ -18,7 +18,13 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file", err.Error())
+		// we can ignore this error if we know we're running in production
+		if os.Getenv("APP_ENV") == "production" || os.Getenv("APP_ENV") == "prod" {
+			log.Println("No .env file found, continuing...")
+		} else {
+			log.Fatal("Error loading .env file", err.Error())
+			return
+		}
 	}
 
 	app := pocketbase.New()
