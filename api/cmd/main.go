@@ -16,6 +16,9 @@ import (
 )
 
 func main() {
+	log.Println("APP_ENV: ", os.Getenv("APP_ENV"))
+	log.Println("APP_URL: ", os.Getenv("APP_URL"))
+
 	err := godotenv.Load()
 	if err != nil {
 		// we can ignore this error if we know we're running in production
