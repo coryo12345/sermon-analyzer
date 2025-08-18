@@ -6,7 +6,6 @@
     - 2. password reset
 * deploy to fly.io
     - Need to follow instructions for rate limiting
-    - attach volume & test
 * update domain on fly
 * configure pocketbase storage backups
 
