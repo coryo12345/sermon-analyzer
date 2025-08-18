@@ -19,6 +19,4 @@ WORKDIR /app
 COPY --from=ui /app/dist/ ./pb_public/
 COPY --from=api /app/sermon-analysis-api ./
 
-CMD ["./sermon-analysis-api", "serve", "sermon-analyzer.fly.dev"]
-# CMD ["./sermon-analysis-api", "serve", "sermon.corydio.com"]
-# CMD ["./sermon-analysis-api", "serve", "--http=0.0.0.0:80"]
+CMD ["./sermon-analysis-api", "serve", "--http=0.0.0.0:80"]
