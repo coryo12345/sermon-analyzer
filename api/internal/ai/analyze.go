@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"mime"
 	"net/http"
 	"os"
 	"path"
@@ -66,9 +67,17 @@ func (a *sermonAnalyzer) AnalyzeSermon(job models.SermonAnalysisJob) (AnalysisRe
 		return AnalysisResult{}, err
 	}
 	defer tmpFile.Close()
-	a.logger.Info("Audio downloaded", "job_id", job.Id, "file", tmpFile.Name())
 
-	file, err := a.client.Files.UploadFromPath(a.ctx, tmpFile.Name(), nil)
+	mimeType := mime.TypeByExtension(path.Ext(tmpFile.Name()))
+	// handle edge cases where mime type is not detected
+	if mimeType == "" && strings.HasSuffix(tmpFile.Name(), ".mp3") {
+		mimeType = "audio/mpeg"
+	}
+	a.logger.Info("Audio downloaded", "job_id", job.Id, "file", tmpFile.Name(), "mime_type", mimeType)
+
+	file, err := a.client.Files.UploadFromPath(a.ctx, tmpFile.Name(), &genai.UploadFileConfig{
+		MIMEType: mimeType,
+	})
 	if err != nil {
 		return AnalysisResult{}, err
 	}
