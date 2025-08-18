@@ -8,6 +8,7 @@
     - Need to follow instructions for rate limiting
     - attach volume & test
 * update domain on fly
+* configure pocketbase storage backups
 
 ## Next Up: Nice to haves
 * set up pwa
