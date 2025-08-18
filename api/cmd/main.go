@@ -54,8 +54,9 @@ func main() {
 		e.App.Settings().Meta.AppURL = os.Getenv("APP_URL")
 		e.App.Settings().Meta.SenderAddress = "noreply@sermon.corydio.com"
 		e.App.Settings().Meta.SenderName = "Sermon Analysis"
-		e.App.Settings().Meta.HideControls = os.Getenv("APP_ENV") == "production" || os.Getenv("APP_ENV") == "prod"
 		e.App.Settings().RateLimits.Enabled = true
+		// This will be nice to turn on later, but for now i want to be able to modify things like oauth secrets
+		// e.App.Settings().Meta.HideControls = os.Getenv("APP_ENV") == "production" || os.Getenv("APP_ENV") == "prod"
 		return nil
 	})
 
