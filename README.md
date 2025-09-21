@@ -4,8 +4,6 @@
 * config email sending
     - 1. email confirmation (acct managerment)
     - 2. password reset
-* deploy to fly.io
-    - Need to follow instructions for rate limiting
 * update domain on fly
 * configure pocketbase storage backups
 
