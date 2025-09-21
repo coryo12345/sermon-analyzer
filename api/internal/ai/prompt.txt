@@ -27,7 +27,7 @@ You are going to respond with 3 things:
     - Try to cover all the major sections of the message with questions if you can.
     - Questions should facilitate discussion & be open ended. Not simple fact-checking questions or yes/no. 
 
-When you respond, your ENTIRE response MUST ALWAYS BE in valid JSON, in the following format (make sure to properly escape any quotations so strings are valid!):
+When you respond, your response MUST ALWAYS BE in valid JSON, a single object in the following format (make sure to properly escape any quotations so strings are valid!):
 
 {
     "summary": "This is the short summary of the whole sermon",
