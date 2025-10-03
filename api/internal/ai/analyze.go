@@ -92,7 +92,7 @@ func (a *sermonAnalyzer) AnalyzeSermon(job models.SermonAnalysisJob) (AnalysisRe
 	}
 
 	a.logger.Info("Uploading audio to Gemini", "job_id", job.Id)
-	resp, err := a.client.Models.GenerateContent(a.ctx, "gemini-2.5-flash-preview-05-20", contents, &genai.GenerateContentConfig{
+	resp, err := a.client.Models.GenerateContent(a.ctx, "gemini-2.5-flash", contents, &genai.GenerateContentConfig{
 		MaxOutputTokens: 65536,
 	})
 	if err != nil {
